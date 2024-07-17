@@ -1,0 +1,25 @@
+name: Build coreboot
+description: Build coreboot firmware
+inputs:
+  defconfig:
+    description: 'Path to platform defconfig'
+    required: true
+outputs:
+  binary:
+    description: 'Path of the compiled coreboot binary'
+runs:
+  using: 'composite'
+  steps:
+    - name: Copy platform defconfig
+      run: cp $INPUT_DEFCONFIG .config
+      shell: bash
+      env:
+        INPUT_DEFCONFIG: ${{ inputs.defconfig }}
+
+    - name: Run olddefconfig
+      run: make olddefconfig
+      shell: bash
+
+    - name: Build coreboot
+      run: make -j $(nproc)
+      shell: bash
